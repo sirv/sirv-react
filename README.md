@@ -38,7 +38,11 @@ export default function App() {
 }
 ```
 
-`<SirvProvider>` is optional; you can instead pass `alias` to each component.
+**Set your alias once.** `<SirvProvider alias="...">` goes near your app root (e.g. the root
+layout); every nested component inherits the alias from context, so you never pass it again. A
+component's own `alias` prop is just an optional override for a one-off asset from another
+account. (You can skip the provider entirely and pass `alias` per component, but that's the
+verbose path.)
 
 ## Components
 

@@ -72,17 +72,18 @@
       <h2>Install</h2>
       <p>Requires React 18 or 19 (peer dependencies). Zero other runtime dependencies.</p>
       <pre><code>npm install @sirv/react</code></pre>
-      <p>Wrap your app in <code>&lt;SirvProvider&gt;</code> (optional) to set a default account
-      alias, then use any component. Spins and views auto-load <code>sirv.js</code>.</p>
+      <p>Wrap your app once in <code>&lt;SirvProvider alias="your.sirv.com"&gt;</code> to set your
+      account alias - every nested component inherits it, so you set the alias in one place and
+      never repeat it. Then use any component. Spins and views auto-load <code>sirv.js</code>.</p>
     </section>
 
     <section id="provider" class="card">
       <h2>&lt;SirvProvider&gt;</h2>
-      <p>Optional context that supplies a default account alias and image defaults so nested components can omit them.</p>
+      <p>Sets your Sirv account alias (and image defaults) ONCE for the whole app. Place it near the root; every nested component inherits the alias, so you never pass it again. Use it once, not per component.</p>
       <table>
         <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td><code>alias</code></td><td><code class="type">string</code></td><td>Default delivery host, e.g. "demo.sirv.com".</td></tr>
+          <tr><td><code>alias</code></td><td><code class="type">string</code></td><td>Your account alias, e.g. "demo.sirv.com". Set once; inherited everywhere.</td></tr>
           <tr><td><code>quality</code></td><td><code class="type">number</code></td><td>Default image quality (0-100).</td></tr>
           <tr><td><code>lazyMode</code></td><td><code class="type">'native' | 'sirvjs' | 'none'</code></td><td>Default lazy-load mode for images.</td></tr>
           <tr><td><code>children</code></td><td><code class="type">ReactNode</code></td><td>Your app.</td></tr>
@@ -106,7 +107,7 @@ export function App() {
         <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td><code>value</code></td><td><code class="type">SirvImageLike</code></td><td>A stored Sirv image value (alternative to alias + path).</td></tr>
-          <tr><td><code>alias</code></td><td><code class="type">string</code></td><td>Delivery host (falls back to the provider).</td></tr>
+          <tr><td><code>alias</code></td><td><code class="type">string</code></td><td>Optional override. Normally set once on &lt;SirvProvider&gt;; omit it here.</td></tr>
           <tr><td><code>path</code></td><td><code class="type">string</code></td><td>Absolute Sirv path, e.g. "/products/shoe.jpg".</td></tr>
           <tr><td><code>width</code></td><td><code class="type">number</code></td><td>Rendered width; also the largest src candidate.</td></tr>
           <tr><td><code>height</code></td><td><code class="type">number</code></td><td>Rendered height.</td></tr>
@@ -134,7 +135,7 @@ export function App() {
         <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td><code>value</code></td><td><code class="type">SirvVideoLike</code></td><td>A stored Sirv video value.</td></tr>
-          <tr><td><code>alias / path</code></td><td><code class="type">string</code></td><td>Delivery host / absolute path.</td></tr>
+          <tr><td><code>alias / path</code></td><td><code class="type">string</code></td><td>alias (optional, inherited from &lt;SirvProvider&gt;) / absolute path.</td></tr>
           <tr><td><code>width / height</code></td><td><code class="type">number</code></td><td>Rendered size.</td></tr>
           <tr><td><code>poster</code></td><td><code class="type">SirvImageLike</code></td><td>Explicit poster; otherwise a Sirv-derived frame.</td></tr>
           <tr><td><code>autoPlay / loop / muted / controls</code></td><td><code class="type">boolean</code></td><td>Standard playback flags (controls default true).</td></tr>
@@ -150,7 +151,7 @@ export function App() {
         <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td><code>value</code></td><td><code class="type">SirvSpinLike</code></td><td>A stored Sirv spin value.</td></tr>
-          <tr><td><code>alias / path</code></td><td><code class="type">string</code></td><td>Delivery host / absolute .spin path.</td></tr>
+          <tr><td><code>alias / path</code></td><td><code class="type">string</code></td><td>alias (optional, inherited from &lt;SirvProvider&gt;) / absolute .spin path.</td></tr>
           <tr><td><code>width / height</code></td><td><code class="type">number</code></td><td>Container size.</td></tr>
         </tbody>
       </table>
@@ -164,7 +165,7 @@ export function App() {
         <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td><code>value</code></td><td><code class="type">SirvViewLike</code></td><td>A stored Sirv view value.</td></tr>
-          <tr><td><code>alias / path</code></td><td><code class="type">string</code></td><td>Delivery host / absolute .view path.</td></tr>
+          <tr><td><code>alias / path</code></td><td><code class="type">string</code></td><td>alias (optional, inherited from &lt;SirvProvider&gt;) / absolute .view path.</td></tr>
           <tr><td><code>width / height</code></td><td><code class="type">number</code></td><td>Container size.</td></tr>
         </tbody>
       </table>

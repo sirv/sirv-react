@@ -12,9 +12,13 @@ const SECTIONS = [
     id: 'provider',
     name: '<SirvProvider>',
     blurb:
-      'Optional context that supplies a default account alias and image defaults so nested components can omit them.',
+      'Sets your Sirv account alias (and image defaults) ONCE for the whole app. Place it near the root; every nested component inherits the alias, so you never pass it again. Use it once, not per component.',
     props: [
-      ['alias', 'string', 'Default delivery host, e.g. "demo.sirv.com".'],
+      [
+        'alias',
+        'string',
+        'Your account alias, e.g. "demo.sirv.com". Set once; inherited everywhere.',
+      ],
       ['quality', 'number', 'Default image quality (0-100).'],
       ['lazyMode', "'native' | 'sirvjs' | 'none'", 'Default lazy-load mode for images.'],
       ['children', 'ReactNode', 'Your app.'],
@@ -36,7 +40,7 @@ export function App() {
       'Responsive image with an auto-generated srcset and native lazy loading, or a sirv.js DPR-aware mode. Accepts either a stored value or alias + path.',
     props: [
       ['value', 'SirvImageLike', 'A stored Sirv image value (alternative to alias + path).'],
-      ['alias', 'string', 'Delivery host (falls back to the provider).'],
+      ['alias', 'string', 'Optional override. Normally set once on <SirvProvider>; omit it here.'],
       ['path', 'string', 'Absolute Sirv path, e.g. "/products/shoe.jpg".'],
       ['width', 'number', 'Rendered width; also the largest src candidate.'],
       ['height', 'number', 'Rendered height.'],
@@ -62,7 +66,11 @@ export function App() {
       'Renders a Sirv-delivered video with a derived poster frame (or your own). Accepts a stored value or alias + path.',
     props: [
       ['value', 'SirvVideoLike', 'A stored Sirv video value.'],
-      ['alias / path', 'string', 'Delivery host / absolute path.'],
+      [
+        'alias / path',
+        'string',
+        'alias (optional, inherited from <SirvProvider>) / absolute path.',
+      ],
       ['width / height', 'number', 'Rendered size.'],
       ['poster', 'SirvImageLike', 'Explicit poster; otherwise a Sirv-derived frame.'],
       [
@@ -79,7 +87,11 @@ export function App() {
     blurb: 'A 360° spin. Renders the sirv.js container and auto-loads sirv.js once per page.',
     props: [
       ['value', 'SirvSpinLike', 'A stored Sirv spin value.'],
-      ['alias / path', 'string', 'Delivery host / absolute .spin path.'],
+      [
+        'alias / path',
+        'string',
+        'alias (optional, inherited from <SirvProvider>) / absolute .spin path.',
+      ],
       ['width / height', 'number', 'Container size.'],
     ],
     code: `<SirvSpin path="/spins/watch.spin" width={500} height={500} />`,
@@ -91,7 +103,11 @@ export function App() {
       'A Sirv "view" - a composite layout of images / videos / spins driven by sirv.js. Auto-loads sirv.js.',
     props: [
       ['value', 'SirvViewLike', 'A stored Sirv view value.'],
-      ['alias / path', 'string', 'Delivery host / absolute .view path.'],
+      [
+        'alias / path',
+        'string',
+        'alias (optional, inherited from <SirvProvider>) / absolute .view path.',
+      ],
       ['width / height', 'number', 'Container size.'],
     ],
     code: `<SirvView path="/views/scene.view" width={800} height={450} />`,
@@ -247,8 +263,9 @@ const html = `<!DOCTYPE html>
       <h2>Install</h2>
       <p>Requires React 18 or 19 (peer dependencies). Zero other runtime dependencies.</p>
       <pre><code>npm install ${pkg.name}</code></pre>
-      <p>Wrap your app in <code>&lt;SirvProvider&gt;</code> (optional) to set a default account
-      alias, then use any component. Spins and views auto-load <code>sirv.js</code>.</p>
+      <p>Wrap your app once in <code>&lt;SirvProvider alias="your.sirv.com"&gt;</code> to set your
+      account alias - every nested component inherits it, so you set the alias in one place and
+      never repeat it. Then use any component. Spins and views auto-load <code>sirv.js</code>.</p>
     </section>
 ${sectionsHtml}
   </main>

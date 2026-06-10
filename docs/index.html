@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@sirv/react - Documentation</title>
+  <style>
+    :root {
+      --primary: #327bba; --primary-dark: #004d99; --text: #333; --muted: #666;
+      --bg: #fff; --bg-light: #f8f9fa; --code-bg: #f4f4f4; --border: #e1e4e8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6; color: var(--text); background: var(--bg); }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    header { background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff; padding: 56px 0; text-align: center; }
+    header h1 { font-size: 2.4rem; margin-bottom: 8px; }
+    header p { font-size: 1.1rem; opacity: .92; }
+    header .ver { display: inline-block; margin-top: 14px; padding: 4px 12px;
+      background: rgba(255,255,255,.2); border-radius: 20px; font-size: .85rem; }
+    nav { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--border);
+      padding: 12px 0; z-index: 10; }
+    nav .container { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+    nav a { font-size: .9rem; color: var(--muted); }
+    main { padding: 32px 0 64px; }
+    .card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+      padding: 24px; margin-bottom: 24px; }
+    .card h2 { color: var(--primary-dark); font-size: 1.4rem; margin-bottom: 8px; }
+    .card > p { color: var(--muted); margin-bottom: 16px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: .92rem; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border);
+      vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; }
+    code { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: .88em;
+      background: var(--code-bg); padding: 2px 6px; border-radius: 4px; }
+    code.type { color: var(--primary-dark); background: #eef4fb; white-space: nowrap; }
+    pre { background: #1e1e1e; color: #e6e6e6; padding: 16px; border-radius: 8px;
+      overflow-x: auto; }
+    pre code { background: none; color: inherit; padding: 0; font-size: .85rem; line-height: 1.5; }
+    .install pre { background: #1e1e1e; }
+    footer { border-top: 1px solid var(--border); padding: 24px 0; color: var(--muted);
+      font-size: .9rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>@sirv/react</h1>
+      <p>React components for displaying Sirv assets - images, videos, 360 spins, views, galleries.</p>
+      <span class="ver">v0.1.0</span>
+    </div>
+  </header>
+  <nav>
+    <div class="container">
+      <a href="#install">Install</a>
+        <a href="#provider">&lt;SirvProvider&gt;</a>
+        <a href="#image">&lt;SirvImage&gt;</a>
+        <a href="#video">&lt;SirvVideo&gt;</a>
+        <a href="#spin">&lt;SirvSpin&gt;</a>
+        <a href="#view">&lt;SirvView&gt;</a>
+        <a href="#media">&lt;SirvMedia&gt;</a>
+        <a href="#gallery">&lt;SirvGallery&gt;</a>
+        <a href="#next">next/image loader</a>
+        <a href="#from-sanity">fromSanityMedia()</a>
+    </div>
+  </nav>
+  <main class="container">
+    <section id="install" class="card install">
+      <h2>Install</h2>
+      <p>Requires React 18 or 19 (peer dependencies). Zero other runtime dependencies.</p>
+      <pre><code>npm install @sirv/react</code></pre>
+      <p>Wrap your app in <code>&lt;SirvProvider&gt;</code> (optional) to set a default account
+      alias, then use any component. Spins and views auto-load <code>sirv.js</code>.</p>
+    </section>
+
+    <section id="provider" class="card">
+      <h2>&lt;SirvProvider&gt;</h2>
+      <p>Optional context that supplies a default account alias and image defaults so nested components can omit them.</p>
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>alias</code></td><td><code class="type">string</code></td><td>Default delivery host, e.g. "demo.sirv.com".</td></tr>
+          <tr><td><code>quality</code></td><td><code class="type">number</code></td><td>Default image quality (0-100).</td></tr>
+          <tr><td><code>lazyMode</code></td><td><code class="type">'native' | 'sirvjs' | 'none'</code></td><td>Default lazy-load mode for images.</td></tr>
+          <tr><td><code>children</code></td><td><code class="type">ReactNode</code></td><td>Your app.</td></tr>
+        </tbody>
+      </table>
+      <pre><code>import { SirvProvider, SirvImage } from '@sirv/react';
+
+export function App() {
+  return (
+    &lt;SirvProvider alias="demo.sirv.com" quality={82}&gt;
+      &lt;SirvImage path="/products/shoe.jpg" width={800} alt="Shoe" /&gt;
+    &lt;/SirvProvider&gt;
+  );
+}</code></pre>
+    </section>
+
+    <section id="image" class="card">
+      <h2>&lt;SirvImage&gt;</h2>
+      <p>Responsive image with an auto-generated srcset and native lazy loading, or a sirv.js DPR-aware mode. Accepts either a stored value or alias + path.</p>
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>value</code></td><td><code class="type">SirvImageLike</code></td><td>A stored Sirv image value (alternative to alias + path).</td></tr>
+          <tr><td><code>alias</code></td><td><code class="type">string</code></td><td>Delivery host (falls back to the provider).</td></tr>
+          <tr><td><code>path</code></td><td><code class="type">string</code></td><td>Absolute Sirv path, e.g. "/products/shoe.jpg".</td></tr>
+          <tr><td><code>width</code></td><td><code class="type">number</code></td><td>Rendered width; also the largest src candidate.</td></tr>
+          <tr><td><code>height</code></td><td><code class="type">number</code></td><td>Rendered height.</td></tr>
+          <tr><td><code>quality</code></td><td><code class="type">number</code></td><td>Image quality 0-100 (overrides the provider).</td></tr>
+          <tr><td><code>sizes</code></td><td><code class="type">string</code></td><td>The &lt;img&gt; sizes attribute for responsive selection.</td></tr>
+          <tr><td><code>priority</code></td><td><code class="type">boolean</code></td><td>Eager-load above-the-fold images.</td></tr>
+          <tr><td><code>lazyMode</code></td><td><code class="type">'native' | 'sirvjs' | 'none'</code></td><td>Lazy strategy (default native).</td></tr>
+          <tr><td><code>srcSetWidths</code></td><td><code class="type">number[]</code></td><td>Width descriptors for the generated srcset.</td></tr>
+          <tr><td><code>alt</code></td><td><code class="type">string</code></td><td>Alt text (falls back to the value’s alt).</td></tr>
+        </tbody>
+      </table>
+      <pre><code>&lt;SirvImage
+  path="/products/shoe.jpg"
+  width={800}
+  height={600}
+  alt="Product shoe"
+  sizes="(min-width: 1024px) 50vw, 100vw"
+/&gt;</code></pre>
+    </section>
+
+    <section id="video" class="card">
+      <h2>&lt;SirvVideo&gt;</h2>
+      <p>Renders a Sirv-delivered video with a derived poster frame (or your own). Accepts a stored value or alias + path.</p>
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>value</code></td><td><code class="type">SirvVideoLike</code></td><td>A stored Sirv video value.</td></tr>
+          <tr><td><code>alias / path</code></td><td><code class="type">string</code></td><td>Delivery host / absolute path.</td></tr>
+          <tr><td><code>width / height</code></td><td><code class="type">number</code></td><td>Rendered size.</td></tr>
+          <tr><td><code>poster</code></td><td><code class="type">SirvImageLike</code></td><td>Explicit poster; otherwise a Sirv-derived frame.</td></tr>
+          <tr><td><code>autoPlay / loop / muted / controls</code></td><td><code class="type">boolean</code></td><td>Standard playback flags (controls default true).</td></tr>
+        </tbody>
+      </table>
+      <pre><code>&lt;SirvVideo path="/clips/intro.mp4" width={800} controls /&gt;</code></pre>
+    </section>
+
+    <section id="spin" class="card">
+      <h2>&lt;SirvSpin&gt;</h2>
+      <p>A 360° spin. Renders the sirv.js container and auto-loads sirv.js once per page.</p>
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>value</code></td><td><code class="type">SirvSpinLike</code></td><td>A stored Sirv spin value.</td></tr>
+          <tr><td><code>alias / path</code></td><td><code class="type">string</code></td><td>Delivery host / absolute .spin path.</td></tr>
+          <tr><td><code>width / height</code></td><td><code class="type">number</code></td><td>Container size.</td></tr>
+        </tbody>
+      </table>
+      <pre><code>&lt;SirvSpin path="/spins/watch.spin" width={500} height={500} /&gt;</code></pre>
+    </section>
+
+    <section id="view" class="card">
+      <h2>&lt;SirvView&gt;</h2>
+      <p>A Sirv "view" - a composite layout of images / videos / spins driven by sirv.js. Auto-loads sirv.js.</p>
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>value</code></td><td><code class="type">SirvViewLike</code></td><td>A stored Sirv view value.</td></tr>
+          <tr><td><code>alias / path</code></td><td><code class="type">string</code></td><td>Delivery host / absolute .view path.</td></tr>
+          <tr><td><code>width / height</code></td><td><code class="type">number</code></td><td>Container size.</td></tr>
+        </tbody>
+      </table>
+      <pre><code>&lt;SirvView path="/views/scene.view" width={800} height={450} /&gt;</code></pre>
+    </section>
+
+    <section id="media" class="card">
+      <h2>&lt;SirvMedia&gt;</h2>
+      <p>Polymorphic renderer: picks &lt;SirvImage&gt; / &lt;SirvVideo&gt; / &lt;SirvSpin&gt; / &lt;SirvView&gt; from the value’s _type discriminator. Ideal for a CMS field whose type varies.</p>
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>value</code></td><td><code class="type">SirvMediaLike</code></td><td>A discriminated value ({ _type: "sirv.image" | ... }).</td></tr>
+          <tr><td><code>width / height</code></td><td><code class="type">number</code></td><td>Passed to the chosen component.</td></tr>
+          <tr><td><code>className</code></td><td><code class="type">string</code></td><td>Passed through.</td></tr>
+        </tbody>
+      </table>
+      <pre><code>&lt;SirvMedia
+  value={{ _type: 'sirv.image', asset: { sirvAlias: 'demo.sirv.com', sirvPath: '/a.jpg' }, alt: 'Hero' }}
+  width={800}
+/&gt;</code></pre>
+    </section>
+
+    <section id="gallery" class="card">
+      <h2>&lt;SirvGallery&gt;</h2>
+      <p>Renders a list of mixed Sirv assets two ways. layout="separate" (default) lays each asset out as its own component in a grid. layout="viewer" combines them all into ONE Sirv Media Viewer (a single .Sirv container with a data-src per asset); images get data-type="zoom".</p>
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>items</code></td><td><code class="type">SirvMediaLike[]</code></td><td>The assets to show (any mix of types).</td></tr>
+          <tr><td><code>layout</code></td><td><code class="type">'separate' | 'viewer'</code></td><td>Render mode (default "separate").</td></tr>
+          <tr><td><code>width / height</code></td><td><code class="type">number</code></td><td>Container size (mainly for "viewer").</td></tr>
+          <tr><td><code>itemWidth / itemHeight</code></td><td><code class="type">number</code></td><td>Per-item size in "separate".</td></tr>
+          <tr><td><code>gap</code></td><td><code class="type">number</code></td><td>Grid gap in px ("separate").</td></tr>
+          <tr><td><code>zoomImages</code></td><td><code class="type">boolean</code></td><td>Add data-type="zoom" to images in "viewer" (default true).</td></tr>
+        </tbody>
+      </table>
+      <pre><code>// Separate components in a grid:
+&lt;SirvGallery items={items} layout="separate" itemWidth={300} /&gt;
+
+// One combined Sirv Media Viewer (image + video + spin + view together):
+&lt;SirvGallery items={items} layout="viewer" width={640} height={480} /&gt;</code></pre>
+    </section>
+
+    <section id="next" class="card">
+      <h2>next/image loader</h2>
+      <p>Use Sirv as the optimizer behind next/image. Re-export the loader, then point next.config at it.</p>
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>sirvLoader</code></td><td><code class="type">({ src, width, quality }) =&gt; string</code></td><td>Imported from "@sirv/react/next".</td></tr>
+        </tbody>
+      </table>
+      <pre><code>// sirv-loader.ts
+export { sirvLoader as default } from '@sirv/react/next';
+
+// next.config.mjs
+export default { images: { loader: 'custom', loaderFile: './sirv-loader.ts' } };</code></pre>
+    </section>
+
+    <section id="from-sanity" class="card">
+      <h2>fromSanityMedia()</h2>
+      <p>Adapter that converts the Sirv Sanity plugin’s stored sirvMedia value into a value &lt;SirvMedia&gt; can render. Optional - only needed when consuming Sanity content.</p>
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>value</code></td><td><code class="type">SanityMediaValue</code></td><td>The stored sirvMedia field value.</td></tr>
+          <tr><td><code>returns</code></td><td><code class="type">SirvMediaLike</code></td><td>Pass straight to &lt;SirvMedia value={...} /&gt;.</td></tr>
+        </tbody>
+      </table>
+      <pre><code>import { SirvMedia, fromSanityMedia } from '@sirv/react';
+
+&lt;SirvMedia value={fromSanityMedia(post.heroMedia)} width={640} /&gt;</code></pre>
+    </section>
+  </main>
+  <footer>
+    <div class="container">
+      @sirv/react · <a href="https://github.com/sirv/sirv-react">GitHub</a> ·
+      <a href="https://sirv.com">Sirv</a> · generated by scripts/build-docs.mjs
+    </div>
+  </footer>
+</body>
+</html>

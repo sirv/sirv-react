@@ -1,12 +1,25 @@
 export {
   buildUrl,
+  buildSirvUrl,
   buildImageUrl,
   buildSrcSet,
+  buildResponsiveSirvImageSource,
   buildVideoUrl,
   buildVideoPosterUrl,
   buildSpinUrl,
   buildViewUrl,
+  isSirvUrl,
+  extractSirvPath,
+  extractSirvHostedPath,
+  createThumbnail,
+  convertFormat,
+  resizeImage,
+  applyAspectRatio,
+  getDownloadUrl,
   type SirvUrlInput,
+  type SirvHostOptions,
+  type ResponsiveSirvImageSource,
+  type ResponsiveSirvImageOptions,
 } from './build-url.js';
 export { parseUrl, type ParsedSirvUrl } from './parse-url.js';
 export {
@@ -14,6 +27,11 @@ export {
   type Transformations,
   type SirvFormat,
   type ScaleOption,
+  type SirvPosition,
+  type SirvColorTone,
   type CropType,
   type CropOptions,
+  type CanvasOptions,
+  type TextOverlayOptions,
+  type WatermarkOptions,
 } from './transformations.js';

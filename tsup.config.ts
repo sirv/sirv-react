@@ -7,7 +7,11 @@ export default defineConfig([
   // 'use client' boundary is re-added by a post-build step (so it works when imported directly
   // into a React Server Component app, e.g. Next.js App Router).
   {
-    entry: { index: 'src/index.ts' },
+    entry: {
+      index: 'src/index.ts',
+      url: 'src/url/index.ts',
+      'media-type': 'src/media-type.ts',
+    },
     format: ['esm', 'cjs'],
     dts: true,
     clean: true,

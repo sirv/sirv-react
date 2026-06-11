@@ -1,4 +1,4 @@
-import type { HTMLAttributes } from 'react';
+import { type HTMLAttributes, useRef } from 'react';
 import { SirvMedia } from './SirvMedia.js';
 import { useSirvConfig } from './SirvProvider.js';
 import { cx } from './cx.js';
@@ -6,6 +6,7 @@ import { resolveTarget } from './resolve.js';
 import { useSirvJs } from './sirvjs-loader.js';
 import type { SirvMediaLike } from './types.js';
 import { buildUrl } from './url/index.js';
+import { type SirvViewerOptions, serializeSirvOptions } from './viewer-options.js';
 
 export type SirvGalleryLayout = 'separate' | 'viewer';
 
@@ -30,6 +31,14 @@ export interface SirvGalleryProps extends Omit<HTMLAttributes<HTMLDivElement>, '
   gap?: number;
   /** Add `data-type="zoom"` to images in the `viewer` layout (default true). */
   zoomImages?: boolean;
+  /** Sirv Media Viewer options serialized to `data-options` on the viewer root. */
+  viewerOptions?: SirvViewerOptions;
+  /** Sirv Media Viewer responsive breakpoint string serialized to `data-breakpoints`. */
+  breakpoints?: string;
+  /** Per-item Sirv Media Viewer options serialized to child `data-options`. */
+  itemOptions?:
+    | SirvViewerOptions
+    | ((item: SirvMediaLike, index: number) => SirvViewerOptions | undefined);
 }
 
 function isImage(item: SirvMediaLike): boolean {
@@ -53,24 +62,46 @@ export function SirvGallery({
   itemHeight,
   gap = 16,
   zoomImages = true,
+  viewerOptions,
+  breakpoints,
+  itemOptions,
   className,
   style,
   ...rest
 }: SirvGalleryProps) {
   const config = useSirvConfig();
+  const sirvRef = useRef<HTMLDivElement>(null);
   // The viewer (and any spins/views in `separate` mode) need sirv.js.
-  useSirvJs(layout === 'viewer');
+  useSirvJs(layout === 'viewer', {
+    root: sirvRef,
+    scriptUrl: config.scriptUrl,
+    autoStart: config.autoStart,
+    startDelay: config.startDelay,
+    restartKey: items.map((item) => item.asset?.sirvPath).join('|'),
+  });
 
   if (layout === 'viewer') {
+    const rootOptions = serializeSirvOptions(viewerOptions);
     return (
-      <div {...rest} className={cx('Sirv', className)} style={{ width, height, ...style }}>
+      <div
+        {...rest}
+        ref={sirvRef}
+        className={cx('Sirv', className)}
+        data-options={rootOptions}
+        data-breakpoints={breakpoints}
+        style={{ width, height, ...style }}
+      >
         {items.map((item, index) => {
           const target = resolveTarget(item.asset, {}, config, 'SirvGallery');
           const zoom = zoomImages && isImage(item);
+          const resolvedItemOptions =
+            typeof itemOptions === 'function' ? itemOptions(item, index) : itemOptions;
           return (
             <div
               key={keyFor(item, index)}
               data-src={buildUrl(target)}
+              data-alt={item.alt}
+              data-options={serializeSirvOptions(resolvedItemOptions)}
               {...(zoom ? { 'data-type': 'zoom' } : {})}
             />
           );

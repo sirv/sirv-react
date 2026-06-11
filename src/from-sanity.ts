@@ -34,6 +34,7 @@ export function fromSanityMedia(value: SanityMediaValue): SirvMediaLike {
       return {
         _type: 'sirv.video',
         asset: { ...asset, durationSec: value.durationSec },
+        alt: value.alt,
         autoplay: value.autoplay,
         loop: value.loop,
         muted: value.muted,
@@ -43,11 +44,13 @@ export function fromSanityMedia(value: SanityMediaValue): SirvMediaLike {
       return {
         _type: 'sirv.spin',
         asset: { sirvAlias: value.sirvAlias, sirvPath: value.sirvPath },
+        alt: value.alt,
       };
     case 'view':
       return {
         _type: 'sirv.view',
         asset: { sirvAlias: value.sirvAlias, sirvPath: value.sirvPath },
+        alt: value.alt,
       };
   }
 }

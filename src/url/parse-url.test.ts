@@ -42,4 +42,11 @@ describe('parseUrl', () => {
     expect(parsed.path).toBe(input.path);
     expect(parsed.transformations).toEqual(transforms);
   });
+
+  it('round-trips paths with spaces and Unicode', () => {
+    const input = { alias: 'demo.sirv.com', path: '/my folder/Кира.jpg' };
+    const parsed = parseUrl(buildUrl(input, { width: 800 }));
+    expect(parsed.path).toBe(input.path);
+    expect(parsed.transformations.width).toBe(800);
+  });
 });

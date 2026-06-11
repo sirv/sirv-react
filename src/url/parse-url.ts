@@ -11,6 +11,10 @@ function intOf(value: string | null): number | undefined {
   return Number.isFinite(n) ? n : undefined;
 }
 
+function decodePath(path: string): string {
+  return path.split('/').map(decodeURIComponent).join('/');
+}
+
 /**
  * Reverse of buildUrl: parses a Sirv delivery URL into its alias, path and the
  * transformation params it carries. Unrecognised params land in `transformations.extras`.
@@ -18,7 +22,7 @@ function intOf(value: string | null): number | undefined {
 export function parseUrl(url: string): ParsedSirvUrl {
   const parsed = new URL(url);
   const alias = parsed.host;
-  const path = parsed.pathname;
+  const path = decodePath(parsed.pathname);
   const q = parsed.searchParams;
   const t: Transformations = {};
   const crop: NonNullable<Transformations['crop']> = {};

@@ -29,6 +29,7 @@ export interface SirvVideoLike {
   _type?: 'sirv.video';
   asset: SirvAssetLike & { durationSec?: number };
   poster?: SirvImageLike;
+  alt?: string;
   autoplay?: boolean;
   loop?: boolean;
   muted?: boolean;
@@ -38,11 +39,17 @@ export interface SirvVideoLike {
 export interface SirvSpinLike {
   _type?: 'sirv.spin';
   asset: { sirvAlias: string; sirvPath: string };
+  alt?: string;
 }
 
 export interface SirvViewLike {
   _type?: 'sirv.view';
   asset: { sirvAlias: string; sirvPath: string };
+  alt?: string;
 }
 
-export type SirvMediaLike = SirvImageLike | SirvVideoLike | SirvSpinLike | SirvViewLike;
+export type SirvMediaLike =
+  | (SirvImageLike & { _type: 'sirv.image' })
+  | (SirvVideoLike & { _type: 'sirv.video' })
+  | (SirvSpinLike & { _type: 'sirv.spin' })
+  | (SirvViewLike & { _type: 'sirv.view' });

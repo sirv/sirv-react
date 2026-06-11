@@ -6,7 +6,10 @@ images, videos, 360 spins, Sirv "views", and combined media-viewer galleries.
 - **Zero runtime dependencies** (only `react` / `react-dom` as peers).
 - Works with **Next.js (App Router & Pages), Vite, Remix, CRA** - anything React 18/19.
 - Responsive `srcset` + native lazy loading, or sirv.js DPR-aware mode.
-- `sirv.js` auto-loaded only when a spin / view / viewer needs it.
+- `sirv.js` auto-loaded only when a spin / view / viewer needs it, with provider-level script URL
+  support.
+- Pure Sirv helpers for Dynamic Imaging URLs, Media Viewer options, spin frame URLs, and media type
+  inference.
 - Ships ESM + CJS + types, with a `'use client'` boundary so the components drop straight into
   React Server Component apps.
 
@@ -69,6 +72,47 @@ import { SirvGallery } from '@sirv/react';
 ```
 
 `items` is an array of `SirvMediaLike` values (`{ _type, asset: { sirvAlias, sirvPath }, ... }`).
+Use `viewerOptions`, `breakpoints`, and `itemOptions` to pass through Sirv Media Viewer
+`data-options`, `data-breakpoints`, and per-item options:
+
+```tsx
+<SirvGallery
+  items={items}
+  layout="viewer"
+  viewerOptions={{ autostart: 'created', 'fullscreen.enable': true }}
+  breakpoints="640:layout.type:slider"
+/>
+```
+
+## Dynamic Imaging utilities
+
+```ts
+import { buildResponsiveSirvImageSource, createThumbnail } from '@sirv/react/url';
+
+const source = buildResponsiveSirvImageSource('https://demo.sirv.com/products/shoe.jpg', {
+  maxWidth: 1200,
+  widths: [320, 640, 960],
+  quality: 82,
+  scaleOption: 'noup',
+});
+
+const thumb = createThumbnail('https://demo.sirv.com/products/shoe.jpg', 256);
+```
+
+The URL helpers include `buildSirvUrl`, `isSirvUrl`, `extractSirvPath`, `resizeImage`,
+`convertFormat`, `applyAspectRatio`, and `getDownloadUrl`.
+
+## Media helpers
+
+```ts
+import { createSirvMediaValue } from '@sirv/react/media-type';
+
+const media = createSirvMediaValue({
+  alias: 'demo.sirv.com',
+  path: '/clips/intro.mp4',
+  alt: 'Intro video',
+});
+```
 
 ## next/image loader
 

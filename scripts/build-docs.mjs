@@ -2,7 +2,7 @@
 // @sirv/react (styled after the Sirv REST API SDK docs). Run with: node scripts/build-docs.mjs
 import { mkdir, writeFile } from 'node:fs/promises';
 
-const pkg = { name: '@sirv/react', version: '0.1.0' };
+const pkg = { name: '@sirv/react', version: '0.1.1' };
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 

@@ -11,6 +11,11 @@ export interface SirvMediaProps {
   className?: string;
 }
 
+function unsupportedMediaType(value: unknown): never {
+  const type = (value as { _type?: unknown } | null)?._type;
+  throw new Error(`<SirvMedia>: unsupported media type "${String(type)}".`);
+}
+
 /** Polymorphic renderer: picks the right component from the value's `_type` discriminator. */
 export function SirvMedia({ value, ...rest }: SirvMediaProps) {
   switch (value._type) {
@@ -23,6 +28,6 @@ export function SirvMedia({ value, ...rest }: SirvMediaProps) {
     case 'sirv.view':
       return <SirvView value={value} {...rest} />;
     default:
-      return null;
+      return unsupportedMediaType(value);
   }
 }

@@ -1,4 +1,4 @@
-import type { HTMLAttributes } from 'react';
+import { type HTMLAttributes, useRef } from 'react';
 import { useSirvConfig } from './SirvProvider.js';
 import { cx } from './cx.js';
 import { resolveTarget } from './resolve.js';
@@ -26,14 +26,24 @@ export function SirvView({
   ...rest
 }: SirvViewProps) {
   const config = useSirvConfig();
+  const sirvRef = useRef<HTMLDivElement>(null);
   const target = resolveTarget(value?.asset, { alias, path }, config, 'SirvView');
-  useSirvJs(true);
+  const src = buildViewUrl(target);
+  useSirvJs(true, {
+    root: sirvRef,
+    scriptUrl: config.scriptUrl,
+    autoStart: config.autoStart,
+    startDelay: config.startDelay,
+    restartKey: src,
+  });
 
   return (
     <div
       {...rest}
+      ref={sirvRef}
       className={cx('Sirv', className)}
-      data-src={buildViewUrl(target)}
+      data-src={src}
+      data-alt={value?.alt}
       style={{ width, height, ...style }}
     />
   );

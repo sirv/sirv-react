@@ -20,9 +20,17 @@
     "./next": {
       "import": { "types": "./dist/next.d.ts", "default": "./dist/next.js" },
       "require": { "types": "./dist/next.d.cts", "default": "./dist/next.cjs" }
+    },
+    "./url": {
+      "import": { "types": "./dist/url.d.ts", "default": "./dist/url.js" },
+      "require": { "types": "./dist/url.d.cts", "default": "./dist/url.cjs" }
+    },
+    "./media-type": {
+      "import": { "types": "./dist/media-type.d.ts", "default": "./dist/media-type.js" },
+      "require": { "types": "./dist/media-type.d.cts", "default": "./dist/media-type.cjs" }
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": ["dist", "docs", "README.md", "LICENSE"],
   "scripts": {
     "build": "tsup",
     "prepublishOnly": "npm run build",

@@ -1,4 +1,4 @@
-import type { ImgHTMLAttributes } from 'react';
+import { type ImgHTMLAttributes, useRef } from 'react';
 import { useSirvConfig } from './SirvProvider.js';
 import { cx } from './cx.js';
 import { resolveTarget } from './resolve.js';
@@ -8,7 +8,7 @@ import { type Transformations, buildSrcSet, buildUrl } from './url/index.js';
 
 export interface SirvImageProps
   extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'width' | 'height'> {
-  /** A stored SirvImageValue (from @sirv/core). Alternative to alias + path. */
+  /** A stored Sirv image value. Alternative to alias + path. */
   value?: SirvImageLike;
   alias?: string;
   path?: string;
@@ -42,12 +42,23 @@ export function SirvImage({
   ...rest
 }: SirvImageProps) {
   const config = useSirvConfig();
+  const sirvRef = useRef<HTMLImageElement>(null);
   const target = resolveTarget(value?.asset, { alias, path }, config, 'SirvImage');
   const effectiveAlt = alt ?? value?.alt ?? '';
   const mode: LazyMode = priority ? 'none' : (lazyMode ?? config.lazyMode ?? 'native');
 
   // sirv.js owns srcset/DPR in sirvjs mode; load it (conditionally) without breaking hook order.
-  useSirvJs(mode === 'sirvjs');
+  const sirvSrc = buildUrl(target, {
+    quality: quality ?? value?.transformations?.quality ?? config.quality,
+    format: value?.transformations?.format ?? 'optimal',
+  });
+  useSirvJs(mode === 'sirvjs', {
+    root: sirvRef,
+    scriptUrl: config.scriptUrl,
+    autoStart: config.autoStart,
+    startDelay: config.startDelay,
+    restartKey: sirvSrc,
+  });
 
   const transforms: Transformations = {
     quality: quality ?? value?.transformations?.quality ?? config.quality,
@@ -58,8 +69,9 @@ export function SirvImage({
     return (
       <img
         {...rest}
+        ref={sirvRef}
         className={cx('Sirv', className)}
-        data-src={buildUrl(target, transforms)}
+        data-src={sirvSrc}
         width={width}
         height={height}
         alt={effectiveAlt}

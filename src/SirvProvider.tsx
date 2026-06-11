@@ -8,6 +8,12 @@ export interface SirvConfig {
   quality?: number;
   /** Default lazy-load mode for images. */
   lazyMode?: LazyMode;
+  /** Sirv Media Viewer script URL. Override for module-limited builds such as `...?modules=spin`. */
+  scriptUrl?: string;
+  /** Automatically call `Sirv.start(element)` and `Sirv.stop(element)` for mounted SMV elements. */
+  autoStart?: boolean;
+  /** Delay before restarting an already-loaded Sirv instance, in ms. */
+  startDelay?: number;
 }
 
 const SirvContext = createContext<SirvConfig>({});

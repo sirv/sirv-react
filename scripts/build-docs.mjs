@@ -21,6 +21,12 @@ const SECTIONS = [
       ],
       ['quality', 'number', 'Default image quality (0-100).'],
       ['lazyMode', "'native' | 'sirvjs' | 'none'", 'Default lazy-load mode for images.'],
+      ['scriptUrl', 'string', 'Optional sirv.js URL, including module-limited URLs.'],
+      [
+        'autoStart',
+        'boolean',
+        'Call Sirv.start(element) on mount and Sirv.stop(element) on cleanup (default true).',
+      ],
       ['children', 'ReactNode', 'Your app.'],
     ],
     code: `import { SirvProvider, SirvImage } from '@sirv/react';
@@ -78,8 +84,11 @@ export function App() {
         'boolean',
         'Standard playback flags (controls default true).',
       ],
+      ['children', 'ReactNode', 'Optional <track> captions or subtitles.'],
     ],
-    code: `<SirvVideo path="/clips/intro.mp4" width={800} controls />`,
+    code: `<SirvVideo path="/clips/intro.mp4" width={800} controls>
+  <track kind="captions" src="/captions.vtt" srcLang="en" label="English" />
+</SirvVideo>`,
   },
   {
     id: 'spin',
@@ -134,17 +143,87 @@ export function App() {
       'Renders a list of mixed Sirv assets two ways. layout="separate" (default) lays each asset out as its own component in a grid. layout="viewer" combines them all into ONE Sirv Media Viewer (a single .Sirv container with a data-src per asset); images get data-type="zoom".',
     props: [
       ['items', 'SirvMediaLike[]', 'The assets to show (any mix of types).'],
+      ['items[].alt', 'string', 'Passed to Sirv Media Viewer as data-alt in "viewer" layout.'],
       ['layout', "'separate' | 'viewer'", 'Render mode (default "separate").'],
       ['width / height', 'number', 'Container size (mainly for "viewer").'],
       ['itemWidth / itemHeight', 'number', 'Per-item size in "separate".'],
       ['gap', 'number', 'Grid gap in px ("separate").'],
       ['zoomImages', 'boolean', 'Add data-type="zoom" to images in "viewer" (default true).'],
+      ['viewerOptions', 'string | object', 'Serialized to data-options on the viewer root.'],
+      ['breakpoints', 'string', 'Serialized to data-breakpoints on the viewer root.'],
+      ['itemOptions', 'string | object | function', 'Serialized to per-item data-options.'],
     ],
     code: `// Separate components in a grid:
 <SirvGallery items={items} layout="separate" itemWidth={300} />
 
 // One combined Sirv Media Viewer (image + video + spin + view together):
-<SirvGallery items={items} layout="viewer" width={640} height={480} />`,
+<SirvGallery
+  items={items}
+  layout="viewer"
+  width={640}
+  height={480}
+  viewerOptions={{ autostart: 'created', 'fullscreen.enable': true }}
+/>`,
+  },
+  {
+    id: 'url',
+    name: 'URL utilities',
+    blurb:
+      'Pure Sirv Dynamic Imaging helpers: build transformed full URLs, responsive src/srcset objects, custom-CDN-aware delivery-host checks, path extraction, thumbnails, format conversion, aspect-ratio canvas, and downloads.',
+    props: [
+      ['buildSirvUrl(url, transforms)', 'function', 'Apply Dynamic Imaging params to a full URL.'],
+      [
+        'buildResponsiveSirvImageSource(url, options)',
+        'function',
+        'Return { src, srcSet, sizes } with normalized width candidates.',
+      ],
+      [
+        'isSirvUrl(url, { customHosts })',
+        'function',
+        'Detect Sirv delivery hosts and optional custom CDN hosts.',
+      ],
+      ['extractSirvPath(url)', 'function', 'Return the decoded pathname from a URL or path input.'],
+      [
+        'createThumbnail / resizeImage / convertFormat',
+        'function',
+        'Convenience delivery helpers.',
+      ],
+    ],
+    code: `import { buildResponsiveSirvImageSource, createThumbnail } from '@sirv/react/url';
+
+const hero = buildResponsiveSirvImageSource('https://demo.sirv.com/products/shoe.jpg', {
+  maxWidth: 1200,
+  widths: [320, 640, 960],
+  quality: 82,
+  scaleOption: 'noup',
+});
+
+const thumb = createThumbnail('https://demo.sirv.com/products/shoe.jpg', 256);`,
+  },
+  {
+    id: 'media-type',
+    name: 'Media helpers',
+    blurb:
+      'Infer @sirv/react discriminators from URLs, paths, filenames, or MIME types, then create values that <SirvMedia> can render.',
+    props: [
+      [
+        'inferSirvMediaType(source)',
+        'function',
+        'Return sirv.image, sirv.video, sirv.spin, or sirv.view.',
+      ],
+      [
+        'createSirvMediaValue(input)',
+        'function',
+        'Create a SirvMediaLike value from alias/path input.',
+      ],
+    ],
+    code: `import { createSirvMediaValue } from '@sirv/react/media-type';
+
+const media = createSirvMediaValue({
+  alias: 'demo.sirv.com',
+  path: '/clips/intro.mp4',
+  alt: 'Intro video',
+});`,
   },
   {
     id: 'next',
@@ -167,7 +246,11 @@ export default { images: { loader: 'custom', loaderFile: './sirv-loader.ts' } };
       'Adapter that converts the Sirv Sanity plugin’s stored sirvMedia value into a value <SirvMedia> can render. Optional - only needed when consuming Sanity content.',
     props: [
       ['value', 'SanityMediaValue', 'The stored sirvMedia field value.'],
-      ['returns', 'SirvMediaLike', 'Pass straight to <SirvMedia value={...} />.'],
+      [
+        'returns',
+        'SirvMediaLike',
+        'Pass straight to <SirvMedia value={...} />; alt is preserved for Sirv Media Viewer data-alt.',
+      ],
     ],
     code: `import { SirvMedia, fromSanityMedia } from '@sirv/react';
 

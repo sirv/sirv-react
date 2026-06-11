@@ -1,4 +1,4 @@
-import type { HTMLAttributes } from 'react';
+import { type HTMLAttributes, useRef } from 'react';
 import { useSirvConfig } from './SirvProvider.js';
 import { cx } from './cx.js';
 import { resolveTarget } from './resolve.js';
@@ -26,14 +26,24 @@ export function SirvSpin({
   ...rest
 }: SirvSpinProps) {
   const config = useSirvConfig();
+  const sirvRef = useRef<HTMLDivElement>(null);
   const target = resolveTarget(value?.asset, { alias, path }, config, 'SirvSpin');
-  useSirvJs(true);
+  const src = buildSpinUrl(target);
+  useSirvJs(true, {
+    root: sirvRef,
+    scriptUrl: config.scriptUrl,
+    autoStart: config.autoStart,
+    startDelay: config.startDelay,
+    restartKey: src,
+  });
 
   return (
     <div
       {...rest}
+      ref={sirvRef}
       className={cx('Sirv', className)}
-      data-src={buildSpinUrl(target)}
+      data-src={src}
+      data-alt={value?.alt}
       style={{ width, height, ...style }}
     />
   );

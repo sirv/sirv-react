@@ -63,6 +63,8 @@
         <a href="#view">&lt;SirvView&gt;</a>
         <a href="#media">&lt;SirvMedia&gt;</a>
         <a href="#gallery">&lt;SirvGallery&gt;</a>
+        <a href="#url">URL utilities</a>
+        <a href="#media-type">Media helpers</a>
         <a href="#next">next/image loader</a>
         <a href="#from-sanity">fromSanityMedia()</a>
     </div>
@@ -86,6 +88,8 @@
           <tr><td><code>alias</code></td><td><code class="type">string</code></td><td>Your account alias, e.g. "demo.sirv.com". Set once; inherited everywhere.</td></tr>
           <tr><td><code>quality</code></td><td><code class="type">number</code></td><td>Default image quality (0-100).</td></tr>
           <tr><td><code>lazyMode</code></td><td><code class="type">'native' | 'sirvjs' | 'none'</code></td><td>Default lazy-load mode for images.</td></tr>
+          <tr><td><code>scriptUrl</code></td><td><code class="type">string</code></td><td>Optional sirv.js URL, including module-limited URLs.</td></tr>
+          <tr><td><code>autoStart</code></td><td><code class="type">boolean</code></td><td>Call Sirv.start(element) on mount and Sirv.stop(element) on cleanup (default true).</td></tr>
           <tr><td><code>children</code></td><td><code class="type">ReactNode</code></td><td>Your app.</td></tr>
         </tbody>
       </table>
@@ -139,9 +143,12 @@ export function App() {
           <tr><td><code>width / height</code></td><td><code class="type">number</code></td><td>Rendered size.</td></tr>
           <tr><td><code>poster</code></td><td><code class="type">SirvImageLike</code></td><td>Explicit poster; otherwise a Sirv-derived frame.</td></tr>
           <tr><td><code>autoPlay / loop / muted / controls</code></td><td><code class="type">boolean</code></td><td>Standard playback flags (controls default true).</td></tr>
+          <tr><td><code>children</code></td><td><code class="type">ReactNode</code></td><td>Optional &lt;track&gt; captions or subtitles.</td></tr>
         </tbody>
       </table>
-      <pre><code>&lt;SirvVideo path="/clips/intro.mp4" width={800} controls /&gt;</code></pre>
+      <pre><code>&lt;SirvVideo path="/clips/intro.mp4" width={800} controls&gt;
+  &lt;track kind="captions" src="/captions.vtt" srcLang="en" label="English" /&gt;
+&lt;/SirvVideo&gt;</code></pre>
     </section>
 
     <section id="spin" class="card">
@@ -196,18 +203,72 @@ export function App() {
         <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td><code>items</code></td><td><code class="type">SirvMediaLike[]</code></td><td>The assets to show (any mix of types).</td></tr>
+          <tr><td><code>items[].alt</code></td><td><code class="type">string</code></td><td>Passed to Sirv Media Viewer as data-alt in "viewer" layout.</td></tr>
           <tr><td><code>layout</code></td><td><code class="type">'separate' | 'viewer'</code></td><td>Render mode (default "separate").</td></tr>
           <tr><td><code>width / height</code></td><td><code class="type">number</code></td><td>Container size (mainly for "viewer").</td></tr>
           <tr><td><code>itemWidth / itemHeight</code></td><td><code class="type">number</code></td><td>Per-item size in "separate".</td></tr>
           <tr><td><code>gap</code></td><td><code class="type">number</code></td><td>Grid gap in px ("separate").</td></tr>
           <tr><td><code>zoomImages</code></td><td><code class="type">boolean</code></td><td>Add data-type="zoom" to images in "viewer" (default true).</td></tr>
+          <tr><td><code>viewerOptions</code></td><td><code class="type">string | object</code></td><td>Serialized to data-options on the viewer root.</td></tr>
+          <tr><td><code>breakpoints</code></td><td><code class="type">string</code></td><td>Serialized to data-breakpoints on the viewer root.</td></tr>
+          <tr><td><code>itemOptions</code></td><td><code class="type">string | object | function</code></td><td>Serialized to per-item data-options.</td></tr>
         </tbody>
       </table>
       <pre><code>// Separate components in a grid:
 &lt;SirvGallery items={items} layout="separate" itemWidth={300} /&gt;
 
 // One combined Sirv Media Viewer (image + video + spin + view together):
-&lt;SirvGallery items={items} layout="viewer" width={640} height={480} /&gt;</code></pre>
+&lt;SirvGallery
+  items={items}
+  layout="viewer"
+  width={640}
+  height={480}
+  viewerOptions={{ autostart: 'created', 'fullscreen.enable': true }}
+/&gt;</code></pre>
+    </section>
+
+    <section id="url" class="card">
+      <h2>URL utilities</h2>
+      <p>Pure Sirv Dynamic Imaging helpers: build transformed full URLs, responsive src/srcset objects, custom-CDN-aware delivery-host checks, path extraction, thumbnails, format conversion, aspect-ratio canvas, and downloads.</p>
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>buildSirvUrl(url, transforms)</code></td><td><code class="type">function</code></td><td>Apply Dynamic Imaging params to a full URL.</td></tr>
+          <tr><td><code>buildResponsiveSirvImageSource(url, options)</code></td><td><code class="type">function</code></td><td>Return { src, srcSet, sizes } with normalized width candidates.</td></tr>
+          <tr><td><code>isSirvUrl(url, { customHosts })</code></td><td><code class="type">function</code></td><td>Detect Sirv delivery hosts and optional custom CDN hosts.</td></tr>
+          <tr><td><code>extractSirvPath(url)</code></td><td><code class="type">function</code></td><td>Return the decoded pathname from a URL or path input.</td></tr>
+          <tr><td><code>createThumbnail / resizeImage / convertFormat</code></td><td><code class="type">function</code></td><td>Convenience delivery helpers.</td></tr>
+        </tbody>
+      </table>
+      <pre><code>import { buildResponsiveSirvImageSource, createThumbnail } from '@sirv/react/url';
+
+const hero = buildResponsiveSirvImageSource('https://demo.sirv.com/products/shoe.jpg', {
+  maxWidth: 1200,
+  widths: [320, 640, 960],
+  quality: 82,
+  scaleOption: 'noup',
+});
+
+const thumb = createThumbnail('https://demo.sirv.com/products/shoe.jpg', 256);</code></pre>
+    </section>
+
+    <section id="media-type" class="card">
+      <h2>Media helpers</h2>
+      <p>Infer @sirv/react discriminators from URLs, paths, filenames, or MIME types, then create values that &lt;SirvMedia&gt; can render.</p>
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>inferSirvMediaType(source)</code></td><td><code class="type">function</code></td><td>Return sirv.image, sirv.video, sirv.spin, or sirv.view.</td></tr>
+          <tr><td><code>createSirvMediaValue(input)</code></td><td><code class="type">function</code></td><td>Create a SirvMediaLike value from alias/path input.</td></tr>
+        </tbody>
+      </table>
+      <pre><code>import { createSirvMediaValue } from '@sirv/react/media-type';
+
+const media = createSirvMediaValue({
+  alias: 'demo.sirv.com',
+  path: '/clips/intro.mp4',
+  alt: 'Intro video',
+});</code></pre>
     </section>
 
     <section id="next" class="card">
@@ -233,7 +294,7 @@ export default { images: { loader: 'custom', loaderFile: './sirv-loader.ts' } };
         <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td><code>value</code></td><td><code class="type">SanityMediaValue</code></td><td>The stored sirvMedia field value.</td></tr>
-          <tr><td><code>returns</code></td><td><code class="type">SirvMediaLike</code></td><td>Pass straight to &lt;SirvMedia value={...} /&gt;.</td></tr>
+          <tr><td><code>returns</code></td><td><code class="type">SirvMediaLike</code></td><td>Pass straight to &lt;SirvMedia value={...} /&gt;; alt is preserved for Sirv Media Viewer data-alt.</td></tr>
         </tbody>
       </table>
       <pre><code>import { SirvMedia, fromSanityMedia } from '@sirv/react';

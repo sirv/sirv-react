@@ -29,7 +29,8 @@ export function SirvVideo({
   autoPlay,
   loop,
   muted,
-  controls = true,
+  controls,
+  children,
   ...rest
 }: SirvVideoProps) {
   const config = useSirvConfig();
@@ -53,9 +54,9 @@ export function SirvVideo({
       autoPlay={autoPlay ?? value?.autoplay}
       loop={loop ?? value?.loop}
       muted={muted ?? value?.muted}
-      controls={controls ?? value?.controls}
+      controls={controls ?? value?.controls ?? true}
     >
-      <track kind="captions" />
+      {children}
     </video>
   );
 }

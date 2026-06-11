@@ -1,7 +1,7 @@
 {
   "name": "@sirv/react",
   "version": "0.1.0",
-  "description": "React components for displaying Sirv assets: responsive images, videos, 360 spins, Sirv views, and combined media-viewer galleries.",
+  "description": "Companion React renderer for Sirv assets: responsive images (srcset + lazy), videos, 360 spins, Sirv views, and combined media-viewer galleries. Renders content picked with the Sirv CMS plugins.",
   "keywords": ["sirv", "react", "image", "cdn", "responsive", "srcset", "video", "360", "spin", "gallery"],
   "homepage": "https://github.com/sirv/sirv-react#readme",
   "repository": { "type": "git", "url": "https://github.com/sirv/sirv-react.git" },

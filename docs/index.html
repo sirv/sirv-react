@@ -50,7 +50,7 @@
     <div class="container">
       <h1>@sirv/react</h1>
       <p>React components for displaying Sirv assets - images, videos, 360 spins, views, galleries.</p>
-      <span class="ver">v0.2.0</span>
+      <span class="ver">v0.2.1</span>
     </div>
   </header>
   <nav>
@@ -61,6 +61,7 @@
         <a href="#video">&lt;SirvVideo&gt;</a>
         <a href="#spin">&lt;SirvSpin&gt;</a>
         <a href="#view">&lt;SirvView&gt;</a>
+        <a href="#model">&lt;SirvModel&gt;</a>
         <a href="#media">&lt;SirvMedia&gt;</a>
         <a href="#gallery">&lt;SirvGallery&gt;</a>
         <a href="#next">next/image loader</a>
@@ -205,9 +206,23 @@ export function App() {
       <pre><code>&lt;SirvView path="/views/scene.view" width={800} height={450} /&gt;</code></pre>
     </section>
 
+    <section id="model" class="card">
+      <h2>&lt;SirvModel&gt;</h2>
+      <p>A 3D model (.glb) viewer, rendered by sirv.js the same way as a spin or view. Auto-loads sirv.js.</p>
+      <table>
+        <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>value</code></td><td><code class="type">SirvModelLike</code></td><td>A stored Sirv model value.</td></tr>
+          <tr><td><code>alias / path</code></td><td><code class="type">string</code></td><td>alias (optional, inherited from &lt;SirvProvider&gt;) / absolute .glb path.</td></tr>
+          <tr><td><code>width / height</code></td><td><code class="type">number</code></td><td>Container size.</td></tr>
+        </tbody>
+      </table>
+      <pre><code>&lt;SirvModel path="/models/chair.glb" width={600} height={600} /&gt;</code></pre>
+    </section>
+
     <section id="media" class="card">
       <h2>&lt;SirvMedia&gt;</h2>
-      <p>Polymorphic renderer: picks &lt;SirvImage&gt; / &lt;SirvVideo&gt; / &lt;SirvSpin&gt; / &lt;SirvView&gt; from the value’s _type discriminator. Ideal for a CMS field whose type varies.</p>
+      <p>Polymorphic renderer: picks &lt;SirvImage&gt; / &lt;SirvVideo&gt; / &lt;SirvSpin&gt; / &lt;SirvView&gt; / &lt;SirvModel&gt; from the value’s _type discriminator. Ideal for a CMS field whose type varies.</p>
       <table>
         <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>

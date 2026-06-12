@@ -5,6 +5,7 @@ import {
   SirvGallery,
   SirvImage,
   SirvMedia,
+  SirvModel,
   SirvProvider,
   SirvSpin,
   SirvVideo,
@@ -40,6 +41,14 @@ describe('<SirvSpin> / <SirvView>', () => {
     expect((container.querySelector('.Sirv') as HTMLElement).getAttribute('data-src')).toBe(
       'https://d.sirv.com/views/s.view',
     );
+  });
+
+  it('model renders the .glb data-src and injects sirv.js', () => {
+    const { container } = render(<SirvModel alias="d.sirv.com" path="/models/chair.glb" />);
+    expect((container.querySelector('.Sirv') as HTMLElement).getAttribute('data-src')).toBe(
+      'https://d.sirv.com/models/chair.glb',
+    );
+    expect(document.querySelector(`script[src="${SIRV_JS_URL}"]`)).not.toBeNull();
   });
 
   it('spin emits the provided options as data-* attributes', () => {
@@ -95,6 +104,13 @@ describe('<SirvMedia>', () => {
     };
     const { container: c2 } = render(<SirvMedia value={spin} />);
     expect((c2.querySelector('.Sirv') as HTMLElement).getAttribute('data-src')).toContain('.spin');
+
+    const model: SirvMediaLike = {
+      _type: 'sirv.model',
+      asset: { sirvAlias: 'd.sirv.com', sirvPath: '/m.glb' },
+    };
+    const { container: c3 } = render(<SirvMedia value={model} />);
+    expect((c3.querySelector('.Sirv') as HTMLElement).getAttribute('data-src')).toContain('.glb');
   });
 });
 

@@ -2,6 +2,7 @@ export { SirvImage, type SirvImageProps } from './SirvImage.js';
 export { SirvVideo, type SirvVideoProps } from './SirvVideo.js';
 export { SirvSpin, type SirvSpinProps, type SirvSpinOptions } from './SirvSpin.js';
 export { SirvView, type SirvViewProps } from './SirvView.js';
+export { SirvModel, type SirvModelProps } from './SirvModel.js';
 export { SirvMedia, type SirvMediaProps } from './SirvMedia.js';
 export {
   SirvGallery,
@@ -32,6 +33,7 @@ export type {
   SirvVideoLike,
   SirvSpinLike,
   SirvViewLike,
+  SirvModelLike,
   SirvMediaLike,
   SirvImageTransformLike,
 } from './types.js';

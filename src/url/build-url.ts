@@ -83,3 +83,8 @@ export function buildSpinUrl(input: SirvUrlInput): string {
 export function buildViewUrl(input: SirvUrlInput): string {
   return baseUrl(input);
 }
+
+/** 3D model (.glb) delivery URL - pointed at by sirv.js `data-src`. */
+export function buildModelUrl(input: SirvUrlInput): string {
+  return baseUrl(input);
+}

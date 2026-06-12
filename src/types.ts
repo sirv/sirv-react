@@ -45,4 +45,14 @@ export interface SirvViewLike {
   asset: { sirvAlias: string; sirvPath: string };
 }
 
-export type SirvMediaLike = SirvImageLike | SirvVideoLike | SirvSpinLike | SirvViewLike;
+export interface SirvModelLike {
+  _type?: 'sirv.model';
+  asset: { sirvAlias: string; sirvPath: string };
+}
+
+export type SirvMediaLike =
+  | SirvImageLike
+  | SirvVideoLike
+  | SirvSpinLike
+  | SirvViewLike
+  | SirvModelLike;

@@ -5,7 +5,7 @@ import type { SirvMediaLike } from './types.js';
  * @sirv/react needs no dependency on the plugin.
  */
 export interface SanityMediaValue {
-  mediaType: 'image' | 'video' | 'spin' | 'view';
+  mediaType: 'image' | 'video' | 'spin' | 'view' | 'model';
   sirvAlias: string;
   sirvPath: string;
   width?: number;
@@ -47,6 +47,11 @@ export function fromSanityMedia(value: SanityMediaValue): SirvMediaLike {
     case 'view':
       return {
         _type: 'sirv.view',
+        asset: { sirvAlias: value.sirvAlias, sirvPath: value.sirvPath },
+      };
+    case 'model':
+      return {
+        _type: 'sirv.model',
         asset: { sirvAlias: value.sirvAlias, sirvPath: value.sirvPath },
       };
   }

@@ -32,12 +32,15 @@ describe('fromSanityMedia', () => {
     expect(result).toMatchObject({ _type: 'sirv.video', controls: true, muted: true });
   });
 
-  it('maps spin and view values', () => {
+  it('maps spin, view and model values', () => {
     expect(fromSanityMedia({ mediaType: 'spin', sirvAlias: 'd', sirvPath: '/c.spin' })._type).toBe(
       'sirv.spin',
     );
     expect(fromSanityMedia({ mediaType: 'view', sirvAlias: 'd', sirvPath: '/s.view' })._type).toBe(
       'sirv.view',
+    );
+    expect(fromSanityMedia({ mediaType: 'model', sirvAlias: 'd', sirvPath: '/m.glb' })._type).toBe(
+      'sirv.model',
     );
   });
 });

@@ -6,6 +6,7 @@ export {
   buildVideoPosterUrl,
   buildSpinUrl,
   buildViewUrl,
+  buildModelUrl,
   type SirvUrlInput,
 } from './build-url.js';
 export { parseUrl, type ParsedSirvUrl } from './parse-url.js';

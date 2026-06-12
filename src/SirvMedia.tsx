@@ -1,4 +1,5 @@
 import { SirvImage } from './SirvImage.js';
+import { SirvModel } from './SirvModel.js';
 import { SirvSpin, type SirvSpinOptions } from './SirvSpin.js';
 import { SirvVideo } from './SirvVideo.js';
 import { SirvView } from './SirvView.js';
@@ -27,6 +28,8 @@ export function SirvMedia({ value, transformations, spinOptions, ...rest }: Sirv
       return <SirvSpin value={value} options={spinOptions} {...rest} />;
     case 'sirv.view':
       return <SirvView value={value} {...rest} />;
+    case 'sirv.model':
+      return <SirvModel value={value} {...rest} />;
     default:
       return null;
   }

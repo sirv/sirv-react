@@ -2,7 +2,7 @@
 // @sirv/react (styled after the Sirv REST API SDK docs). Run with: node scripts/build-docs.mjs
 import { mkdir, writeFile } from 'node:fs/promises';
 
-const pkg = { name: '@sirv/react', version: '0.2.0' };
+const pkg = { name: '@sirv/react', version: '0.2.1' };
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -154,10 +154,26 @@ export function App() {
     code: `<SirvView path="/views/scene.view" width={800} height={450} />`,
   },
   {
+    id: 'model',
+    name: '<SirvModel>',
+    blurb:
+      'A 3D model (.glb) viewer, rendered by sirv.js the same way as a spin or view. Auto-loads sirv.js.',
+    props: [
+      ['value', 'SirvModelLike', 'A stored Sirv model value.'],
+      [
+        'alias / path',
+        'string',
+        'alias (optional, inherited from <SirvProvider>) / absolute .glb path.',
+      ],
+      ['width / height', 'number', 'Container size.'],
+    ],
+    code: `<SirvModel path="/models/chair.glb" width={600} height={600} />`,
+  },
+  {
     id: 'media',
     name: '<SirvMedia>',
     blurb:
-      'Polymorphic renderer: picks <SirvImage> / <SirvVideo> / <SirvSpin> / <SirvView> from the value’s _type discriminator. Ideal for a CMS field whose type varies.',
+      'Polymorphic renderer: picks <SirvImage> / <SirvVideo> / <SirvSpin> / <SirvView> / <SirvModel> from the value’s _type discriminator. Ideal for a CMS field whose type varies.',
     props: [
       ['value', 'SirvMediaLike', 'A discriminated value ({ _type: "sirv.image" | ... }).'],
       ['width / height', 'number', 'Passed to the chosen component.'],

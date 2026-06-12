@@ -1,7 +1,7 @@
 # @sirv/react
 
 React components for displaying [Sirv](https://sirv.com) assets in any React app - responsive
-images, videos, 360 spins, Sirv "views", and combined media-viewer galleries.
+images, videos, 360 spins, Sirv "views", 3D models (.glb), and combined media-viewer galleries.
 
 - **Zero runtime dependencies** (only `react` / `react-dom` as peers).
 - Works with **Next.js (App Router & Pages), Vite, Remix, CRA** - anything React 18/19.
@@ -52,8 +52,17 @@ verbose path.)
 | `<SirvVideo>` | Sirv-delivered video with a derived poster |
 | `<SirvSpin>` | 360° spin (sirv.js) |
 | `<SirvView>` | Sirv composite "view" (sirv.js) |
+| `<SirvModel>` | 3D model (`.glb`) viewer (sirv.js) |
 | `<SirvMedia>` | Polymorphic - picks the right component from a value's `_type` |
 | `<SirvGallery>` | A list of mixed assets, `layout="separate"` or combined `layout="viewer"` |
+
+### 3D models
+
+`<SirvModel>` renders a `.glb` model in a sirv.js container, the same way as a spin or view:
+
+```tsx
+<SirvModel path="/models/chair.glb" width={600} height={600} />
+```
 
 ### Gallery: separate vs combined viewer
 
@@ -63,7 +72,7 @@ import { SirvGallery } from '@sirv/react';
 // Each asset as its own component, in a responsive grid:
 <SirvGallery items={items} layout="separate" itemWidth={300} />
 
-// All assets combined into ONE Sirv Media Viewer (image + video + spin + view together);
+// All assets combined into ONE Sirv Media Viewer (image + video + spin + view + model together);
 // images are zoomable (data-type="zoom"):
 <SirvGallery items={items} layout="viewer" width={640} height={480} />
 ```

@@ -22,6 +22,12 @@ export interface SirvImageProps
   lazyMode?: LazyMode;
   /** Width descriptors for the generated srcset (native mode). */
   srcSetWidths?: number[];
+  /**
+   * Sirv dynamic-imaging parameters (crop, rotate, blur, grayscale, profile, colortone, ...).
+   * Merged on top of any `value.transformations`; `width`/`height`/`quality` props still win
+   * for the matching keys. See https://sirv.com/help/articles/dynamic-imaging/
+   */
+  transformations?: Transformations;
 }
 
 const DEFAULT_WIDTHS = [320, 480, 640, 768, 1024, 1280, 1600];
@@ -37,6 +43,7 @@ export function SirvImage({
   priority = false,
   lazyMode,
   srcSetWidths = DEFAULT_WIDTHS,
+  transformations,
   alt,
   className,
   ...rest
@@ -49,9 +56,15 @@ export function SirvImage({
   // sirv.js owns srcset/DPR in sirvjs mode; load it (conditionally) without breaking hook order.
   useSirvJs(mode === 'sirvjs');
 
+  // Precedence: explicit `transformations` prop > value.transformations > config defaults.
+  // `width`/`height` HTML props are layout hints (passed to <img>), not URL params - only
+  // include `height` in URL params when it came in via `transformations`.
   const transforms: Transformations = {
-    quality: quality ?? value?.transformations?.quality ?? config.quality,
-    format: value?.transformations?.format ?? 'optimal',
+    ...value?.transformations,
+    ...transformations,
+    quality:
+      quality ?? transformations?.quality ?? value?.transformations?.quality ?? config.quality,
+    format: transformations?.format ?? value?.transformations?.format ?? 'optimal',
   };
 
   if (mode === 'sirvjs') {

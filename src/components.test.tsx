@@ -42,6 +42,32 @@ describe('<SirvSpin> / <SirvView>', () => {
     );
   });
 
+  it('spin emits the provided options as data-* attributes', () => {
+    const { container } = render(
+      <SirvSpin
+        alias="d.sirv.com"
+        path="/a.spin"
+        options={{
+          autospin: 'always',
+          autospinSpeed: 200,
+          spinDirection: 'cw',
+          hint: 'once',
+          bottomBar: 'hide',
+          fullscreenZoom: true,
+          extras: { 'mouse-scale': 1.5 },
+        }}
+      />,
+    );
+    const el = container.querySelector('.Sirv') as HTMLElement;
+    expect(el.getAttribute('data-autospin')).toBe('always');
+    expect(el.getAttribute('data-autospin-speed')).toBe('200');
+    expect(el.getAttribute('data-spin-direction')).toBe('cw');
+    expect(el.getAttribute('data-hint')).toBe('once');
+    expect(el.getAttribute('data-bottom-bar')).toBe('hide');
+    expect(el.getAttribute('data-fullscreen-zoom')).toBe('true');
+    expect(el.getAttribute('data-mouse-scale')).toBe('1.5');
+  });
+
   it('injects sirv.js only once across multiple spins', () => {
     render(
       <>
@@ -96,6 +122,36 @@ describe('<SirvGallery>', () => {
     expect(imageChild?.getAttribute('data-type')).toBe('zoom');
     expect(videoChild?.getAttribute('data-type')).toBeNull();
     expect(document.querySelector(`script[src="${SIRV_JS_URL}"]`)).not.toBeNull();
+  });
+
+  it('viewer layout forwards viewer options as data-* attributes', () => {
+    const { container } = render(
+      <SirvGallery
+        items={items}
+        layout="viewer"
+        viewer={{
+          thumbnails: 'bottom',
+          thumbnailsType: 'image',
+          autoplay: 4000,
+          autoplayPauseOnHover: true,
+          slideDuration: 600,
+          zoom: true,
+          fullscreen: true,
+          arrows: true,
+          loop: true,
+        }}
+      />,
+    );
+    const root = container.querySelector('.Sirv') as HTMLElement;
+    expect(root.getAttribute('data-thumbnails')).toBe('bottom');
+    expect(root.getAttribute('data-thumbnails-type')).toBe('image');
+    expect(root.getAttribute('data-autoplay')).toBe('4000');
+    expect(root.getAttribute('data-autoplay-pause-on-hover')).toBe('true');
+    expect(root.getAttribute('data-slide-duration')).toBe('600');
+    expect(root.getAttribute('data-zoom')).toBe('true');
+    expect(root.getAttribute('data-fullscreen')).toBe('true');
+    expect(root.getAttribute('data-arrows')).toBe('true');
+    expect(root.getAttribute('data-loop')).toBe('true');
   });
 
   it('separate layout renders one component per item (no combined .Sirv wrapper)', () => {

@@ -2,12 +2,41 @@ import type { HTMLAttributes } from 'react';
 import { SirvMedia } from './SirvMedia.js';
 import { useSirvConfig } from './SirvProvider.js';
 import { cx } from './cx.js';
+import { type DataAttrValue, toDataAttributes } from './data-attrs.js';
 import { resolveTarget } from './resolve.js';
 import { useSirvJs } from './sirvjs-loader.js';
 import type { SirvMediaLike } from './types.js';
 import { buildUrl } from './url/index.js';
 
 export type SirvGalleryLayout = 'separate' | 'viewer';
+
+/**
+ * Common Sirv Media Viewer options. Each named field maps to a `data-*` attribute on the
+ * viewer container (camelCase -> kebab-case). Use `extras` for anything not modelled here.
+ * See https://sirv.com/help/articles/sirv-media-viewer/
+ */
+export interface SirvViewerOptions {
+  /** Thumbnail strip position: 'top' | 'bottom' | 'left' | 'right' | 'none' (hide). */
+  thumbnails?: 'top' | 'bottom' | 'left' | 'right' | 'none';
+  /** Thumbnail style: 'image' | 'text' | 'dots'. */
+  thumbnailsType?: 'image' | 'text' | 'dots';
+  /** Auto-advance slides; pass a number to set the per-slide delay in ms. */
+  autoplay?: boolean | number;
+  /** Pause auto-advance when the pointer hovers the viewer. */
+  autoplayPauseOnHover?: boolean;
+  /** Slide transition duration in ms. */
+  slideDuration?: number;
+  /** Show the zoom control on images. */
+  zoom?: boolean;
+  /** Show the fullscreen control. */
+  fullscreen?: boolean;
+  /** Show prev/next arrows. */
+  arrows?: boolean;
+  /** Loop from the last slide back to the first. */
+  loop?: boolean;
+  /** Escape hatch: emitted verbatim as `data-<kebab-case-key>` attributes. */
+  extras?: Record<string, DataAttrValue>;
+}
 
 export interface SirvGalleryProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   /** The assets to show (mixed types allowed). */
@@ -30,6 +59,8 @@ export interface SirvGalleryProps extends Omit<HTMLAttributes<HTMLDivElement>, '
   gap?: number;
   /** Add `data-type="zoom"` to images in the `viewer` layout (default true). */
   zoomImages?: boolean;
+  /** Sirv Media Viewer options (only used in `layout="viewer"`). */
+  viewer?: SirvViewerOptions;
 }
 
 function isImage(item: SirvMediaLike): boolean {
@@ -38,6 +69,21 @@ function isImage(item: SirvMediaLike): boolean {
 
 function keyFor(item: SirvMediaLike, index: number): string {
   return item.asset?.sirvPath ?? String(index);
+}
+
+function viewerOptionsToDataAttrs(options: SirvViewerOptions | undefined): Record<string, string> {
+  if (!options) return {};
+  const { extras, autoplay, ...named } = options;
+  // `autoplay: true` -> `data-autoplay="true"`; a number -> `data-autoplay="<ms>"`.
+  const autoplayAttr =
+    autoplay === undefined || autoplay === null
+      ? {}
+      : toDataAttributes({ autoplay: typeof autoplay === 'number' ? autoplay : autoplay });
+  return {
+    ...toDataAttributes(named),
+    ...autoplayAttr,
+    ...(extras ? toDataAttributes(extras) : {}),
+  };
 }
 
 /**
@@ -53,6 +99,7 @@ export function SirvGallery({
   itemHeight,
   gap = 16,
   zoomImages = true,
+  viewer,
   className,
   style,
   ...rest
@@ -63,7 +110,12 @@ export function SirvGallery({
 
   if (layout === 'viewer') {
     return (
-      <div {...rest} className={cx('Sirv', className)} style={{ width, height, ...style }}>
+      <div
+        {...rest}
+        className={cx('Sirv', className)}
+        {...viewerOptionsToDataAttrs(viewer)}
+        style={{ width, height, ...style }}
+      >
         {items.map((item, index) => {
           const target = resolveTarget(item.asset, {}, config, 'SirvGallery');
           const zoom = zoomImages && isImage(item);

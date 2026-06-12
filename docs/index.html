@@ -50,7 +50,7 @@
     <div class="container">
       <h1>@sirv/react</h1>
       <p>React components for displaying Sirv assets - images, videos, 360 spins, views, galleries.</p>
-      <span class="ver">v0.1.1</span>
+      <span class="ver">v0.2.0</span>
     </div>
   </header>
   <nav>
@@ -117,6 +117,7 @@ export function App() {
           <tr><td><code>lazyMode</code></td><td><code class="type">'native' | 'sirvjs' | 'none'</code></td><td>Lazy strategy (default native).</td></tr>
           <tr><td><code>srcSetWidths</code></td><td><code class="type">number[]</code></td><td>Width descriptors for the generated srcset.</td></tr>
           <tr><td><code>alt</code></td><td><code class="type">string</code></td><td>Alt text (falls back to the value’s alt).</td></tr>
+          <tr><td><code>transformations</code></td><td><code class="type">Transformations</code></td><td>Sirv dynamic-imaging params (crop, rotate, blur, grayscale, profile, page, ...). Merged on top of value.transformations.</td></tr>
         </tbody>
       </table>
       <pre><code>&lt;SirvImage
@@ -125,7 +126,23 @@ export function App() {
   height={600}
   alt="Product shoe"
   sizes="(min-width: 1024px) 50vw, 100vw"
-/&gt;</code></pre>
+/&gt;
+
+// Dynamic imaging: face-cropped, slightly sharpened, grayscale.
+&lt;SirvImage
+  path="/people/jane.jpg"
+  width={400}
+  height={400}
+  alt="Jane"
+  transformations={{
+    crop: { width: 400, height: 400, type: 'face' },
+    grayscale: true,
+    sharpen: 30,
+  }}
+/&gt;
+
+// Apply a saved Sirv profile:
+&lt;SirvImage path="/products/shoe.jpg" width={1200} alt="Shoe" transformations={{ profile: 'Hero' }} /&gt;</code></pre>
     </section>
 
     <section id="video" class="card">
@@ -153,9 +170,25 @@ export function App() {
           <tr><td><code>value</code></td><td><code class="type">SirvSpinLike</code></td><td>A stored Sirv spin value.</td></tr>
           <tr><td><code>alias / path</code></td><td><code class="type">string</code></td><td>alias (optional, inherited from &lt;SirvProvider&gt;) / absolute .spin path.</td></tr>
           <tr><td><code>width / height</code></td><td><code class="type">number</code></td><td>Container size.</td></tr>
+          <tr><td><code>options</code></td><td><code class="type">SirvSpinOptions</code></td><td>sirv.js spin options (autospin, spinDirection, spinSpeed, hint, bottomBar, fullscreenZoom, controls, extras). Emitted as data-* on the container.</td></tr>
         </tbody>
       </table>
-      <pre><code>&lt;SirvSpin path="/spins/watch.spin" width={500} height={500} /&gt;</code></pre>
+      <pre><code>&lt;SirvSpin path="/spins/watch.spin" width={500} height={500} /&gt;
+
+// With autospin, hint, bottom bar hidden, and fullscreen zoom enabled:
+&lt;SirvSpin
+  path="/spins/watch.spin"
+  width={500}
+  height={500}
+  options={{
+    autospin: 'always',
+    autospinSpeed: 200,
+    spinDirection: 'cw',
+    hint: 'once',
+    bottomBar: 'hide',
+    fullscreenZoom: true,
+  }}
+/&gt;</code></pre>
     </section>
 
     <section id="view" class="card">
@@ -181,6 +214,8 @@ export function App() {
           <tr><td><code>value</code></td><td><code class="type">SirvMediaLike</code></td><td>A discriminated value ({ _type: "sirv.image" | ... }).</td></tr>
           <tr><td><code>width / height</code></td><td><code class="type">number</code></td><td>Passed to the chosen component.</td></tr>
           <tr><td><code>className</code></td><td><code class="type">string</code></td><td>Passed through.</td></tr>
+          <tr><td><code>transformations</code></td><td><code class="type">Transformations</code></td><td>Forwarded to &lt;SirvImage&gt; when the value is an image.</td></tr>
+          <tr><td><code>spinOptions</code></td><td><code class="type">SirvSpinOptions</code></td><td>Forwarded to &lt;SirvSpin&gt; when the value is a spin.</td></tr>
         </tbody>
       </table>
       <pre><code>&lt;SirvMedia
@@ -201,13 +236,33 @@ export function App() {
           <tr><td><code>itemWidth / itemHeight</code></td><td><code class="type">number</code></td><td>Per-item size in "separate".</td></tr>
           <tr><td><code>gap</code></td><td><code class="type">number</code></td><td>Grid gap in px ("separate").</td></tr>
           <tr><td><code>zoomImages</code></td><td><code class="type">boolean</code></td><td>Add data-type="zoom" to images in "viewer" (default true).</td></tr>
+          <tr><td><code>viewer</code></td><td><code class="type">SirvViewerOptions</code></td><td>Sirv Media Viewer options for "viewer" layout (thumbnails, autoplay, slideDuration, zoom, fullscreen, arrows, loop, extras). Emitted as data-* on the container.</td></tr>
         </tbody>
       </table>
       <pre><code>// Separate components in a grid:
 &lt;SirvGallery items={items} layout="separate" itemWidth={300} /&gt;
 
 // One combined Sirv Media Viewer (image + video + spin + view together):
-&lt;SirvGallery items={items} layout="viewer" width={640} height={480} /&gt;</code></pre>
+&lt;SirvGallery items={items} layout="viewer" width={640} height={480} /&gt;
+
+// With bottom thumbnails, autoplay, fullscreen and arrows:
+&lt;SirvGallery
+  items={items}
+  layout="viewer"
+  width={800}
+  height={600}
+  viewer={{
+    thumbnails: 'bottom',
+    thumbnailsType: 'image',
+    autoplay: 4000,
+    autoplayPauseOnHover: true,
+    slideDuration: 600,
+    zoom: true,
+    fullscreen: true,
+    arrows: true,
+    loop: true,
+  }}
+/&gt;</code></pre>
     </section>
 
     <section id="next" class="card">

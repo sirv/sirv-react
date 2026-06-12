@@ -2,7 +2,7 @@
 // @sirv/react (styled after the Sirv REST API SDK docs). Run with: node scripts/build-docs.mjs
 import { mkdir, writeFile } from 'node:fs/promises';
 
-const pkg = { name: '@sirv/react', version: '0.1.1' };
+const pkg = { name: '@sirv/react', version: '0.2.0' };
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -50,6 +50,11 @@ export function App() {
       ['lazyMode', "'native' | 'sirvjs' | 'none'", 'Lazy strategy (default native).'],
       ['srcSetWidths', 'number[]', 'Width descriptors for the generated srcset.'],
       ['alt', 'string', 'Alt text (falls back to the value’s alt).'],
+      [
+        'transformations',
+        'Transformations',
+        'Sirv dynamic-imaging params (crop, rotate, blur, grayscale, profile, page, ...). Merged on top of value.transformations.',
+      ],
     ],
     code: `<SirvImage
   path="/products/shoe.jpg"
@@ -57,7 +62,23 @@ export function App() {
   height={600}
   alt="Product shoe"
   sizes="(min-width: 1024px) 50vw, 100vw"
-/>`,
+/>
+
+// Dynamic imaging: face-cropped, slightly sharpened, grayscale.
+<SirvImage
+  path="/people/jane.jpg"
+  width={400}
+  height={400}
+  alt="Jane"
+  transformations={{
+    crop: { width: 400, height: 400, type: 'face' },
+    grayscale: true,
+    sharpen: 30,
+  }}
+/>
+
+// Apply a saved Sirv profile:
+<SirvImage path="/products/shoe.jpg" width={1200} alt="Shoe" transformations={{ profile: 'Hero' }} />`,
   },
   {
     id: 'video',
@@ -93,8 +114,28 @@ export function App() {
         'alias (optional, inherited from <SirvProvider>) / absolute .spin path.',
       ],
       ['width / height', 'number', 'Container size.'],
+      [
+        'options',
+        'SirvSpinOptions',
+        'sirv.js spin options (autospin, spinDirection, spinSpeed, hint, bottomBar, fullscreenZoom, controls, extras). Emitted as data-* on the container.',
+      ],
     ],
-    code: `<SirvSpin path="/spins/watch.spin" width={500} height={500} />`,
+    code: `<SirvSpin path="/spins/watch.spin" width={500} height={500} />
+
+// With autospin, hint, bottom bar hidden, and fullscreen zoom enabled:
+<SirvSpin
+  path="/spins/watch.spin"
+  width={500}
+  height={500}
+  options={{
+    autospin: 'always',
+    autospinSpeed: 200,
+    spinDirection: 'cw',
+    hint: 'once',
+    bottomBar: 'hide',
+    fullscreenZoom: true,
+  }}
+/>`,
   },
   {
     id: 'view',
@@ -121,6 +162,12 @@ export function App() {
       ['value', 'SirvMediaLike', 'A discriminated value ({ _type: "sirv.image" | ... }).'],
       ['width / height', 'number', 'Passed to the chosen component.'],
       ['className', 'string', 'Passed through.'],
+      [
+        'transformations',
+        'Transformations',
+        'Forwarded to <SirvImage> when the value is an image.',
+      ],
+      ['spinOptions', 'SirvSpinOptions', 'Forwarded to <SirvSpin> when the value is a spin.'],
     ],
     code: `<SirvMedia
   value={{ _type: 'sirv.image', asset: { sirvAlias: 'demo.sirv.com', sirvPath: '/a.jpg' }, alt: 'Hero' }}
@@ -139,12 +186,36 @@ export function App() {
       ['itemWidth / itemHeight', 'number', 'Per-item size in "separate".'],
       ['gap', 'number', 'Grid gap in px ("separate").'],
       ['zoomImages', 'boolean', 'Add data-type="zoom" to images in "viewer" (default true).'],
+      [
+        'viewer',
+        'SirvViewerOptions',
+        'Sirv Media Viewer options for "viewer" layout (thumbnails, autoplay, slideDuration, zoom, fullscreen, arrows, loop, extras). Emitted as data-* on the container.',
+      ],
     ],
     code: `// Separate components in a grid:
 <SirvGallery items={items} layout="separate" itemWidth={300} />
 
 // One combined Sirv Media Viewer (image + video + spin + view together):
-<SirvGallery items={items} layout="viewer" width={640} height={480} />`,
+<SirvGallery items={items} layout="viewer" width={640} height={480} />
+
+// With bottom thumbnails, autoplay, fullscreen and arrows:
+<SirvGallery
+  items={items}
+  layout="viewer"
+  width={800}
+  height={600}
+  viewer={{
+    thumbnails: 'bottom',
+    thumbnailsType: 'image',
+    autoplay: 4000,
+    autoplayPauseOnHover: true,
+    slideDuration: 600,
+    zoom: true,
+    fullscreen: true,
+    arrows: true,
+    loop: true,
+  }}
+/>`,
   },
   {
     id: 'next',
